@@ -8,7 +8,7 @@ public class MovieRequest {
     private String Description;
     private String rate;
     private String registeringUser;
-    private List<String> actors = new ArrayList<>();
+    private List<Integer> actors = new ArrayList<>();
 
     public MovieRequest() {
     }
@@ -53,11 +53,11 @@ public class MovieRequest {
         this.registeringUser = registeringUser;
     }
 
-    public List<String> getActors() {
+    public List<Integer> getActors() {
         return actors;
     }
 
-    public void setActors(List<String> actors) {
+    public void setActors(List<Integer> actors) {
         this.actors = actors;
     }
 }

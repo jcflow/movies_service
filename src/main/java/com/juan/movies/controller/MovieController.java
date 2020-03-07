@@ -7,6 +7,7 @@ import com.juan.movies.model.Movie;
 import com.juan.movies.model.MovieCatalog;
 import com.juan.movies.model.User;
 import com.juan.movies.repository.*;
+import com.juan.movies.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,25 +18,21 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class MovieController {
     @Autowired
-    private MovieRepository movieRepository;
+    private MovieService movieService;
     @Autowired
-    private MovieCatalogRepository movieCatalogRepository;
+    private MovieCatalogService movieCatalogService;
     @Autowired
-    private MovieRentalRepository movieRentalRepository;
+    private MovieRentalService movieRentalService;
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
     @Autowired
-    private ActorRepository actorRepository;
+    private ActorService actorService;
 
     @GetMapping("/movies")
     public List<MovieResponse> all() {
-        List<MovieResponse> response = movieRepository.findAllNotDeleted().stream().map((movie) -> {
-            Optional<MovieCatalog> movieCatalog = movieCatalogRepository.findById(movie.getId());
-            Optional<Date> returnedDate = movieRentalRepository
-                    .findReturnedDatesByMovieId(movie.getId()).stream().findFirst();
-
-            int numberOfCopies = movieCatalog.map(MovieCatalog::getNumberOfCopies).orElse(0);
-            Date availableDate = returnedDate.orElse(null);
+        List<MovieResponse> response = movieService.getAllNonDeletedMovies().stream().map((movie) -> {
+            Date availableDate = movieRentalService.getAvailableDateByMovieId(movie.getId());
+            int numberOfCopies = movieCatalogService.getNumberOfCopiesByMovieId(movie.getId());
             MovieResponse movieResponse = new MovieResponse();
             movieResponse.setTitle(movie.getTitle());
             movieResponse.setYear(movie.getYear());
@@ -50,12 +47,8 @@ public class MovieController {
 
     @PostMapping("/movie")
     public Movie newMovie(@RequestBody MovieRequest movieRequest) {
-        Optional<User> foundUser = userRepository.findByUserName(movieRequest.getRegisteringUser());
-        User registeringUser = foundUser.orElse(null);
-
-        Set<Actor> actors = new HashSet<>(actorRepository
-                .findActorsByIds(movieRequest.getActors()));
-
+        User registeringUser = userService.findByUserName(movieRequest.getRegisteringUser());
+        Set<Actor> actors = new HashSet<>(actorService.findActorsByIds(movieRequest.getActors()));
         Movie movie = new Movie();
         movie.setTitle(movieRequest.getTitle());
         movie.setYear(movieRequest.getYear());
@@ -63,6 +56,6 @@ public class MovieController {
         movie.setRate(movieRequest.getRate());
         movie.setRegisteringUser(registeringUser);
         movie.setActors(actors);
-        return movieRepository.save(movie);
+        return movieService.save(movie);
     }
 }
