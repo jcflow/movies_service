@@ -8,15 +8,15 @@ public class MovieCatalog {
     private int id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "movie_id")
+    @JoinColumn(name = "movie_id", nullable = false)
     @MapsId
     private Movie movie;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "price_id")
+    @JoinColumn(name = "price_id", nullable = false)
     private Price price;
 
-    private int numberOfCopies;
+    private int numberOfCopies = 0;
 
     public MovieCatalog() {
     }

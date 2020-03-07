@@ -49,7 +49,7 @@ public class MovieController {
     }
 
     @PostMapping("/movie")
-    public Movie newEmployee(@RequestBody MovieRequest movieRequest) {
+    public Movie newMovie(@RequestBody MovieRequest movieRequest) {
         Optional<User> foundUser = userRepository.findByUserName(movieRequest.getRegisteringUser());
         User registeringUser = foundUser.orElse(null);
 

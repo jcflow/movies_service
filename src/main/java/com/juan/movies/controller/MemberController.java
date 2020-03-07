@@ -15,7 +15,7 @@ public class MemberController {
     private MemberRepository memberRepository;
 
     @PostMapping("/member")
-    public Member newEmployee(@RequestBody Member memberRequest) {
+    public Member newMember(@RequestBody Member memberRequest) {
         // Not necessary to create a member request class.
         return memberRepository.save(memberRequest);
     }
