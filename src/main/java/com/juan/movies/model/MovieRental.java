@@ -19,6 +19,5 @@ public class MovieRental {
     private Date returnedDate;
     @OneToOne(cascade = CascadeType.ALL)
     private Price price;
-    @Column(name="status",columnDefinition = "varchar(25) default NULL")
-    private String status;
+    private String status = null;
 }

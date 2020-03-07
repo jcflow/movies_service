@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api")
 public class MovieController {
     @Autowired
     private MovieRepository movieRepository;

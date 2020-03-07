@@ -3,7 +3,6 @@ package com.juan.movies.model;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.Date;
 import java.util.HashSet;
@@ -14,15 +13,14 @@ public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @NotNull
+    @Column(name = "title", nullable = false)
     @Length(min = 50)
     private String title;
-    @NotNull
+    @Column(name = "year", nullable = false)
     private Date year;
-    @NotNull
+    @Column(name = "description", nullable = false)
     @Length(min = 100)
     private String description;
-    @NotNull
     @Pattern(regexp = "^(G|PG|PG-13|R|NC-17)$")
     private String rate = "G";
     @ManyToOne
