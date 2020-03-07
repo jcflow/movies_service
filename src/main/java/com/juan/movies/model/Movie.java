@@ -1,6 +1,11 @@
 package com.juan.movies.model;
 
+import org.hibernate.validator.constraints.Length;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,17 +14,24 @@ public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+    @NotNull
+    @Length(min = 50)
     private String title;
-    private int year;
-    private String Description;
-    private String rate;
+    @NotNull
+    private Date year;
+    @NotNull
+    @Length(min = 100)
+    private String description;
+    @NotNull
+    @Pattern(regexp = "^(G|PG|PG-13|R|NC-17)$")
+    private String rate = "G";
     @ManyToOne
     @JoinColumn(name="registering_user")
     private User registeringUser;
     @ManyToOne
     @JoinColumn(name="updating_user")
     private User updatingUser;
-    private boolean deleted;
+    private boolean deleted = false;
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE
@@ -49,20 +61,20 @@ public class Movie {
         this.title = title;
     }
 
-    public int getYear() {
+    public Date getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(Date year) {
         this.year = year;
     }
 
     public String getDescription() {
-        return Description;
+        return description;
     }
 
     public void setDescription(String description) {
-        Description = description;
+        this.description = description;
     }
 
     public String getRate() {

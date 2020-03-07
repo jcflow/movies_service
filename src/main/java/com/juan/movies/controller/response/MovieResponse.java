@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class MovieResponse {
     private String title;
-    private int year;
+    private Date year;
     private String rate;
     private Date availableDate;
     private int numberOfCopies;
@@ -24,11 +24,11 @@ public class MovieResponse {
         this.title = title;
     }
 
-    public int getYear() {
+    public Date getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(Date year) {
         this.year = year;
     }
 

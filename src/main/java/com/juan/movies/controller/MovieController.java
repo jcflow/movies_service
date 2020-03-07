@@ -1,22 +1,20 @@
 package com.juan.movies.controller;
 
+import com.juan.movies.controller.request.MovieRequest;
 import com.juan.movies.controller.response.MovieResponse;
+import com.juan.movies.model.Actor;
+import com.juan.movies.model.Movie;
 import com.juan.movies.model.MovieCatalog;
-import com.juan.movies.repository.MovieCatalogRepository;
-import com.juan.movies.repository.MovieRentalRepository;
-import com.juan.movies.repository.MovieRepository;
+import com.juan.movies.model.User;
+import com.juan.movies.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/movies")
+@RequestMapping
 public class MovieController {
     @Autowired
     private MovieRepository movieRepository;
@@ -24,10 +22,14 @@ public class MovieController {
     private MovieCatalogRepository movieCatalogRepository;
     @Autowired
     private MovieRentalRepository movieRentalRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ActorRepository actorRepository;
 
-    @GetMapping
+    @GetMapping("/movies")
     public List<MovieResponse> all() {
-        List<MovieResponse> response = movieRepository.findAll().stream().map((movie) -> {
+        List<MovieResponse> response = movieRepository.findAllNotDeleted().stream().map((movie) -> {
             Optional<MovieCatalog> movieCatalog = movieCatalogRepository.findById(movie.getId());
             Optional<Date> returnedDate = movieRentalRepository
                     .findReturnedDatesByMovieId(movie.getId()).stream().findFirst();
@@ -44,5 +46,23 @@ public class MovieController {
             return movieResponse;
         }).collect(Collectors.toList());
         return response;
+    }
+
+    @PostMapping("/movie")
+    public Movie newEmployee(@RequestBody MovieRequest movieRequest) {
+        Optional<User> foundUser = userRepository.findByUserName(movieRequest.getRegisteringUser());
+        User registeringUser = foundUser.orElse(null);
+
+        Set<Actor> actors = new HashSet<>(actorRepository
+                .findActorsByIds(movieRequest.getActors()));
+
+        Movie movie = new Movie();
+        movie.setTitle(movieRequest.getTitle());
+        movie.setYear(movieRequest.getYear());
+        movie.setDescription(movieRequest.getDescription());
+        movie.setRate(movieRequest.getRate());
+        movie.setRegisteringUser(registeringUser);
+        movie.setActors(actors);
+        return movieRepository.save(movie);
     }
 }
