@@ -18,4 +18,9 @@ public class MovieCatalogImplementation implements MovieCatalogService {
         Optional<MovieCatalog> movieCatalog = movieCatalogRepository.findById(movieId);
         return movieCatalog.map(MovieCatalog::getNumberOfCopies).orElse(0);
     }
+
+    @Override
+    public MovieCatalog save(MovieCatalog movieCatalog) {
+        return movieCatalogRepository.save(movieCatalog);
+    }
 }
