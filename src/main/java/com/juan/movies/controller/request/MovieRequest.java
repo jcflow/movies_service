@@ -1,11 +1,14 @@
 package com.juan.movies.controller.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.*;
 
 public class MovieRequest {
     private String title;
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date year;
-    private String Description;
+    private String description;
     private String rate;
     private String registeringUser;
     private List<Integer> actors = new ArrayList<>();
@@ -30,11 +33,11 @@ public class MovieRequest {
     }
 
     public String getDescription() {
-        return Description;
+        return description;
     }
 
     public void setDescription(String description) {
-        Description = description;
+        this.description = description;
     }
 
     public String getRate() {

@@ -28,8 +28,6 @@ public class MovieRentalController {
     private MemberService memberService;
     @Autowired
     private MovieService movieService;
-    @Autowired
-    private MovieCatalogRepository movieCatalogRepository;
 
     @PostMapping("/rental")
     public MovieRental newMovieRental(@RequestBody MovieRentalRequest movieRentalRequest) {

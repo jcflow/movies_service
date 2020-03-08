@@ -17,5 +17,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<Movie> findAllNotDeleted();
 
     @Query("SELECT u FROM User u WHERE u.name = :username")
-    Optional<User> findByUserName(@Param("username") String username);
+    List<User> findByUserName(@Param("username") String username);
 }

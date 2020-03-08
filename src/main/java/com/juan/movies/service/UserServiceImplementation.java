@@ -16,7 +16,7 @@ public class UserServiceImplementation implements UserService {
     private UserRepository userRepository;
     @Override
     public User findByUserName(String username) {
-        Optional<User> user = userRepository.findByUserName(username);
+        Optional<User> user = userRepository.findByUserName(username).stream().findFirst();
         if (!user.isPresent()) {
             throw new UserNotFoundException();
         }
