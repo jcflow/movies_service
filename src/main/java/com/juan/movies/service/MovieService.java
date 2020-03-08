@@ -10,4 +10,6 @@ public interface MovieService {
     List<Movie> getAllNonDeletedMovies();
 
     Movie save(Movie movie);
+
+    Movie findById(int movieId);
 }

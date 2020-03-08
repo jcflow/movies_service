@@ -1,5 +1,8 @@
 package com.juan.movies.service;
 
+import com.juan.movies.controller.exception.MovieCatalogNotFoundException;
+import com.juan.movies.controller.exception.MovieNotFoundException;
+import com.juan.movies.model.Movie;
 import com.juan.movies.model.MovieCatalog;
 import com.juan.movies.repository.MovieCatalogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +12,7 @@ import java.util.Date;
 import java.util.Optional;
 
 @Service
-public class MovieCatalogImplementation implements MovieCatalogService {
+public class MovieCatalogServiceImplementation implements MovieCatalogService {
     @Autowired
     private MovieCatalogRepository movieCatalogRepository;
 
@@ -21,6 +24,16 @@ public class MovieCatalogImplementation implements MovieCatalogService {
 
     @Override
     public MovieCatalog save(MovieCatalog movieCatalog) {
+        // TODO
         return movieCatalogRepository.save(movieCatalog);
+    }
+
+    @Override
+    public MovieCatalog findById(int movieId) {
+        Optional<MovieCatalog> movieCatalog = movieCatalogRepository.findById(movieId);
+        if (!movieCatalog.isPresent()) {
+            throw new MovieCatalogNotFoundException();
+        }
+        return movieCatalog.get();
     }
 }
