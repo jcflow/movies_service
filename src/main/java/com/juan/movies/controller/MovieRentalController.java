@@ -1,18 +1,10 @@
 package com.juan.movies.controller;
 
 import com.juan.movies.controller.request.MovieRentalRequest;
-import com.juan.movies.controller.request.MovieRentalStatusRequest;
-import com.juan.movies.model.MovieCatalog;
 import com.juan.movies.model.MovieRental;
-import com.juan.movies.model.Price;
-import com.juan.movies.repository.MemberRepository;
-import com.juan.movies.repository.MovieCatalogRepository;
-import com.juan.movies.repository.MovieRentalRepository;
-import com.juan.movies.repository.MovieRepository;
 import com.juan.movies.service.MemberService;
 import com.juan.movies.service.MovieRentalService;
 import com.juan.movies.service.MovieService;
-import com.juan.movies.utils.DateHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

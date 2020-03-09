@@ -1,5 +1,7 @@
 package com.juan.movies.service;
 
+import com.juan.movies.controller.exception.InvalidRentalDateException;
+import com.juan.movies.controller.exception.NoAvailableCopiesException;
 import com.juan.movies.model.MovieCatalog;
 import com.juan.movies.model.MovieRental;
 import com.juan.movies.repository.MovieRentalRepository;
@@ -29,12 +31,18 @@ public class MovieRentalServiceImplementation implements MovieRentalService {
     public MovieRental save(MovieRental movieRental) {
         // Rental logic
         Date rentalDate = movieRental.getDate();
+        if (rentalDate.before(new Date())) {
+            throw new InvalidRentalDateException();
+        }
         Date toReturnDate = DateHelper.addDays(rentalDate, 3);
         movieRental.setToReturnDate(toReturnDate);
         movieRental.setReturnedDate(null);
-        MovieCatalog movieCatalog = movieCatalogService.findById(movieRental.getId());
+        MovieCatalog movieCatalog = movieCatalogService.findById(movieRental.getMovie().getId());
         movieRental.setPrice(movieCatalog.getPrice());
         int copies = movieCatalog.getNumberOfCopies();
+        if (copies <= 0) {
+            throw new NoAvailableCopiesException();
+        }
         movieCatalog.setNumberOfCopies(copies - 1);
         movieRental.setStatus("Rented");
 

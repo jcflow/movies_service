@@ -1,10 +1,13 @@
 package com.juan.movies.controller.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 public class MovieRentalRequest {
     private int memberId;
     private int movieId;
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date date;
 
     public MovieRentalRequest() {
