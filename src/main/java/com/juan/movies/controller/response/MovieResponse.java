@@ -3,6 +3,7 @@ package com.juan.movies.controller.response;
 import com.juan.movies.model.Actor;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 public class MovieResponse {
@@ -11,7 +12,7 @@ public class MovieResponse {
     private String rate;
     private Date availableDate;
     private int numberOfCopies;
-    private Set<Actor> actors;
+    private List<String> actors;
 
     public MovieResponse() {
     }
@@ -56,11 +57,11 @@ public class MovieResponse {
         this.numberOfCopies = numberOfCopies;
     }
 
-    public Set<Actor> getActors() {
+    public List<String> getActors() {
         return actors;
     }
 
-    public void setActors(Set<Actor> actors) {
+    public void setActors(List<String> actors) {
         this.actors = actors;
     }
 }

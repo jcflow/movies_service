@@ -9,6 +9,8 @@ import com.juan.movies.model.User;
 import com.juan.movies.repository.*;
 import com.juan.movies.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -39,14 +41,14 @@ public class MovieController {
             movieResponse.setRate(movie.getRate());
             movieResponse.setAvailableDate(availableDate);
             movieResponse.setNumberOfCopies(numberOfCopies);
-            movieResponse.setActors(movie.getActors());
+            movieResponse.setActors(movie.getActors().stream().map(Actor::getName).collect(Collectors.toList()));
             return movieResponse;
         }).collect(Collectors.toList());
         return response;
     }
 
     @PostMapping("/movie")
-    public Movie newMovie(@RequestBody MovieRequest movieRequest) {
+    public ResponseEntity<String> newMovie(@RequestBody MovieRequest movieRequest) {
         User registeringUser = userService.findByUserName(movieRequest.getRegisteringUser());
         Set<Actor> actors = new HashSet<>(actorService.findActorsByIds(movieRequest.getActors()));
         Movie movie = new Movie();
@@ -56,6 +58,7 @@ public class MovieController {
         movie.setRate(movieRequest.getRate());
         movie.setRegisteringUser(registeringUser);
         movie.setActors(actors);
-        return movieService.save(movie);
+        movieService.save(movie);
+        return new ResponseEntity<>("Movie created.", HttpStatus.CREATED);
     }
 }

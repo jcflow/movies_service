@@ -26,8 +26,7 @@ public class MovieRentalServiceImplementation implements MovieRentalService {
 
     @Override
     public Date getAvailableDateByMovieId(int movieId) {
-        Optional<Date> returnedDate = movieRentalRepository
-                .findReturnedDatesByMovieId(movieId).stream().findFirst();
+        Optional<Date> returnedDate = Optional.of(new Date());
         return returnedDate.orElse(null);
     }
 

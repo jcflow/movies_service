@@ -4,6 +4,8 @@ import com.juan.movies.model.Member;
 import com.juan.movies.repository.MemberRepository;
 import com.juan.movies.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +18,9 @@ public class MemberController {
     private MemberService memberService;
 
     @PostMapping("/member")
-    public Member newMember(@RequestBody Member memberRequest) {
+    public ResponseEntity<String> newMember(@RequestBody Member memberRequest) {
         // Not necessary to create a member request class.
-        return memberService.save(memberRequest);
+        memberService.save(memberRequest);
+        return new ResponseEntity<>("Member created.", HttpStatus.CREATED);
     }
 }

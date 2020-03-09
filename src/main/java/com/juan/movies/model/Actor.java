@@ -10,7 +10,7 @@ public class Actor {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private String name;
-    @ManyToMany(mappedBy = "actors")
+    @ManyToMany(mappedBy = "actors", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private Set<Movie> movies = new HashSet<>();
 
     public Actor() {

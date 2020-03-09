@@ -7,9 +7,13 @@ import com.juan.movies.service.MemberService;
 import com.juan.movies.service.MovieRentalService;
 import com.juan.movies.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Optional;
 
 @RestController
@@ -23,7 +27,7 @@ public class MovieRentalController {
     private MovieService movieService;
 
     @PostMapping("/rental")
-    public MovieRental newMovieRental(@RequestBody MovieRentalRequest movieRentalRequest) {
+    public ResponseEntity<String> newMovieRental(@RequestBody MovieRentalRequest movieRentalRequest) {
         Date rentalDate = movieRentalRequest.getDate();
         int memberId = movieRentalRequest.getMemberId();
         int movieId = movieRentalRequest.getMovieId();
@@ -31,13 +35,15 @@ public class MovieRentalController {
         movieRental.setMember(memberService.findById(memberId));
         movieRental.setMovie(movieService.findById(movieId));
         movieRental.setDate(rentalDate);
-        return movieRentalService.save(movieRental);
+        movieRentalService.save(movieRental);
+        return new ResponseEntity<>("Movie rental created.", HttpStatus.CREATED);
     }
 
     @PatchMapping("/rental/{id}")
-    public MovieRental patchMovieRental(@RequestBody MovieRentalStatusRequest movieRentalStatusRequest,
-                                        @PathVariable int id) {
+    public ResponseEntity<String> patchMovieRental(@RequestBody MovieRentalStatusRequest movieRentalStatusRequest,
+                                        @PathVariable("id") String id) {
         String status = movieRentalStatusRequest.getStatus();
-        return movieRentalService.updateStatusById(id, status);
+        movieRentalService.updateStatusById(Integer.parseInt(id), status);
+        return new ResponseEntity<>("Movie rental updated.", HttpStatus.OK);
     }
 }
