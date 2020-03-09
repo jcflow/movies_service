@@ -1,6 +1,7 @@
 package com.juan.movies.controller;
 
 import com.juan.movies.controller.request.MovieRentalRequest;
+import com.juan.movies.controller.request.MovieRentalStatusRequest;
 import com.juan.movies.model.MovieRental;
 import com.juan.movies.service.MemberService;
 import com.juan.movies.service.MovieRentalService;
@@ -31,5 +32,12 @@ public class MovieRentalController {
         movieRental.setMovie(movieService.findById(movieId));
         movieRental.setDate(rentalDate);
         return movieRentalService.save(movieRental);
+    }
+
+    @PatchMapping("/rental/{id}")
+    public MovieRental patchMovieRental(@RequestBody MovieRentalStatusRequest movieRentalStatusRequest,
+                                        @PathVariable int id) {
+        String status = movieRentalStatusRequest.getStatus();
+        return movieRentalService.updateStatusById(id, status);
     }
 }

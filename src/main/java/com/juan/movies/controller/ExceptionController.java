@@ -37,4 +37,14 @@ public class ExceptionController {
     public ResponseEntity<Object> exception(NoAvailableCopiesException exception) {
         return new ResponseEntity<>("No available copies for this movie.", HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = MovieRentalNotFoundException.class)
+    public ResponseEntity<Object> exception(MovieRentalNotFoundException exception) {
+        return new ResponseEntity<>("Movie rental not found.", HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = MovieRentalStatusNotValidException.class)
+    public ResponseEntity<Object> exception(MovieRentalStatusNotValidException exception) {
+        return new ResponseEntity<>("Movie rental status not valid.", HttpStatus.BAD_REQUEST);
+    }
 }

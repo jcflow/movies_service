@@ -10,4 +10,6 @@ public interface MovieRentalService {
     Date getAvailableDateByMovieId(int movieId);
 
     MovieRental save(MovieRental movieRental);
+
+    MovieRental updateStatusById(int id, String status);
 }

@@ -4,6 +4,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,8 +22,7 @@ public class Movie {
     @Column(name = "description", nullable = false)
     @Length(min = 100)
     private String description;
-    @Pattern(regexp = "^(G|PG|PG-13|R|NC-17)$")
-    private String rate = "G";
+    private String rate = Rate.G.toString();
     @ManyToOne
     @JoinColumn(name="registering_user")
     private User registeringUser;
@@ -80,7 +80,9 @@ public class Movie {
     }
 
     public void setRate(String rate) {
-        this.rate = rate;
+        if (Arrays.stream(Rate.values()).anyMatch((value) -> value.toString().equals(rate))) {
+            this.rate = rate;
+        }
     }
 
     public User getRegisteringUser() {

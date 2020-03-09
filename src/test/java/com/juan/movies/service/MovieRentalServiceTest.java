@@ -1,8 +1,6 @@
 package com.juan.movies.service;
 
-import com.juan.movies.controller.exception.InvalidRentalDateException;
-import com.juan.movies.controller.exception.MovieCatalogNotFoundException;
-import com.juan.movies.controller.exception.NoAvailableCopiesException;
+import com.juan.movies.controller.exception.*;
 import com.juan.movies.model.Movie;
 import com.juan.movies.model.MovieCatalog;
 import com.juan.movies.model.MovieRental;
@@ -22,8 +20,7 @@ import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -35,6 +32,7 @@ public class MovieRentalServiceTest {
     private MovieCatalog movieCatalog;
 
     private MovieRentalService movieRentalService;
+    private MovieRentalRepository movieRentalRepository;
     private MovieCatalogRepository movieCatalogRepository;
 
     @BeforeEach
@@ -59,7 +57,7 @@ public class MovieRentalServiceTest {
         MovieCatalogService movieCatalogService = new MovieCatalogServiceImplementation();
 
         // WORKAROUND: Due mockito and @TestConfiguration did not work.
-        MovieRentalRepository movieRentalRepository = Mockito.mock(MovieRentalRepository.class);
+        movieRentalRepository = Mockito.mock(MovieRentalRepository.class);
         when(movieRentalRepository.save(any())).thenReturn(null);
 
         movieCatalogRepository = Mockito.mock(MovieCatalogRepository.class);
@@ -83,7 +81,7 @@ public class MovieRentalServiceTest {
     }
 
     @Test
-    public void invalidDate() throws Exception {
+    public void saveInvalidDate() throws Exception {
         Exception exception = assertThrows(InvalidRentalDateException.class, () -> {
             MovieRental movieRental = new MovieRental();
             movieRental.setDate(new Date(new Date().getYear() - 1, 1, 1));
@@ -92,7 +90,7 @@ public class MovieRentalServiceTest {
     }
 
     @Test
-    public void movieCatalogNotFound() throws Exception {
+    public void saveMovieCatalogNotFound() throws Exception {
         when(movieCatalogRepository.findById(eq(1))).thenReturn(Optional.empty());
         Exception exception = assertThrows(MovieCatalogNotFoundException.class, () -> {
             MovieRental movieRental = new MovieRental();
@@ -103,7 +101,7 @@ public class MovieRentalServiceTest {
     }
 
     @Test
-    public void noMoreCopies() throws Exception {
+    public void saveNoMoreCopies() throws Exception {
         movieCatalog.setNumberOfCopies(0);
         Exception exception = assertThrows(NoAvailableCopiesException.class, () -> {
             MovieRental movieRental = new MovieRental();
@@ -111,5 +109,48 @@ public class MovieRentalServiceTest {
             movieRental.setMovie(movie);
             movieRentalService.save(movieRental);
         });
+    }
+
+    @Test
+    public void updateStatusByIdMovieRentalNotFound() throws Exception {
+        when(movieRentalRepository.findById(eq(0))).thenReturn(Optional.empty());
+        Exception exception = assertThrows(MovieRentalNotFoundException.class, () -> {
+            movieRentalService.updateStatusById(0, MovieRentalServiceImplementation.RENTED_STATUS);
+        });
+    }
+
+    @Test
+    public void updateStatusByIdInvalidStatus() throws Exception {
+        MovieRental movieRental = new MovieRental();
+        when(movieRentalRepository.findById(eq(0))).thenReturn(Optional.of(movieRental));
+        Exception exception = assertThrows(MovieRentalStatusNotValidException.class, () -> {
+            movieRentalService.updateStatusById(0, "XXX");
+        });
+    }
+
+    @Test
+    public void updateStatusByIdRentedStatus() throws Exception {
+        when(movieCatalogRepository.findById(eq(1))).thenReturn(Optional.empty());
+        MovieRental movieRental = new MovieRental();
+        movieRental.setMovie(movie);
+        when(movieRentalRepository.findById(eq(0))).thenReturn(Optional.of(movieRental));
+
+        movieRentalService.updateStatusById(0, MovieRentalServiceImplementation.RENTED_STATUS);
+        assertEquals(MovieRentalServiceImplementation.RENTED_STATUS , movieRental.getStatus());
+    }
+
+    @Test
+    public void updateStatusByIdReturnedStatus() throws Exception {
+        movieCatalog.setNumberOfCopies(0);
+        when(movieCatalogRepository.findById(eq(1))).thenReturn(Optional.of(movieCatalog));
+        MovieRental movieRental = new MovieRental();
+        movieRental.setMovie(movie);
+        assertNull(movieRental.getReturnedDate());
+        when(movieRentalRepository.findById(eq(0))).thenReturn(Optional.of(movieRental));
+
+        movieRentalService.updateStatusById(0, MovieRentalServiceImplementation.RETURNED_STATUS);
+        assertEquals(MovieRentalServiceImplementation.RETURNED_STATUS , movieRental.getStatus());
+        assertEquals(1 , movieCatalog.getNumberOfCopies());
+        assertNotNull(movieRental.getReturnedDate());
     }
 }
